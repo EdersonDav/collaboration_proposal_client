@@ -4,20 +4,22 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDispatch, useSelector } from 'react-redux';
 import  { useNavigate } from 'react-router-dom'
+import moment from 'moment';
 
 import { schema } from "./validations"
 import { api } from '../../service/api';
 import { IFormFields } from '../../types/interfaces';
-import { Form, Input, Label, Section } from './style';
-import { saveDataForm, useFormData } from '../../redux/sliceForm';
-import { saveDataResult } from '../../redux/sliceResult';
-import { toogleValue } from '../../redux/sliceFormWhitResult';
-import moment from 'moment';
+import { saveDataForm, useFormData, clearDataForm } from '../../redux/sliceForm';
+import { cancel, useCancelProposal } from '../../redux/sliceCancelProposal';
+import { saveDataResult, clearDataResult } from '../../redux/sliceResult';
+import { openCloseModal } from '../../redux/sliceResumeModal';
+import { Form, Input, Label, Section, ButtonContend } from './style';
 
 export const FormComponent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const initialValues = useSelector(useFormData)
+  const cancelProposal = useSelector(useCancelProposal)
 
   const [dynamicFields, setDynamicFields] = useState({
     vacationsTwelfth: 0,
@@ -68,14 +70,10 @@ export const FormComponent = () => {
 
     api.post('/proposal', payload).then(res=> {
       dispatch((saveDataResult(res.data)));
-      dispatch(toogleValue());
-      navigate('/');
+      dispatch(openCloseModal());
     }).catch(err =>{
       console.log(err.message);
     })
-
-   
-
   }
 
   useEffect(()=>{
@@ -115,7 +113,20 @@ export const FormComponent = () => {
       })
     }
     
-  },[numberFamilyMembers, healthInsurance])
+  },[numberFamilyMembers, healthInsurance]);
+
+  const cancelForm = () =>{
+    dispatch(cancel());
+    dispatch(clearDataForm());
+    dispatch(clearDataResult());
+    navigate('/')
+  }
+
+  useEffect(() => {
+    if(cancelProposal){
+      cancelForm()
+    }
+  }, [cancelProposal])
 
   return (
     <div className='container'>
@@ -123,164 +134,170 @@ export const FormComponent = () => {
         <Section>
           <h1>General</h1>
           <div>
-            <Label htmlFor="name">Name</Label>
-            <Input 
-              type="text" 
-              id="name"
-              {...register('name')}
-            />
-            <p>{errors.name?.message}</p>
-          </div>
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input 
-              type="email" 
-              id="email"
-              {...register('email')}
-            />
-            <p>{errors.email?.message}</p>
-          </div>
-          <div>
-            <Label htmlFor="collaborationStartDate">Collaboration start date</Label>
-            <Input 
-              type="date" 
-              id="collaborationStartDate"
-              {...register('collaborationStartDate')}
-            />
-            <p>{errors.collaborationStartDate?.message}</p>
+            <div>
+              <Label htmlFor="name">Name</Label>
+              <Input 
+                type="text" 
+                id="name"
+                {...register('name')}
+              />
+              <p>{errors.name?.message}</p>
+            </div>
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input 
+                type="email" 
+                id="email"
+                {...register('email')}
+              />
+              <p>{errors.email?.message}</p>
+            </div>
+            <div>
+              <Label htmlFor="collaborationStartDate">Collaboration start date</Label>
+              <Input 
+                type="date" 
+                id="collaborationStartDate"
+                {...register('collaborationStartDate')}
+              />
+              <p>{errors.collaborationStartDate?.message}</p>
+            </div>
           </div>
         </Section>
         <Section>
           <h1>Financial</h1>
           <div>
-            <Label htmlFor="baseValue">Base value</Label>
-            <Input 
-              type="number" 
-              id="baseValue"
-              {...register('baseValue')}
-            />
-            <p>{errors.baseValue?.message}</p>
-          </div>
-          <div>
-            <Label htmlFor="workScheduleExemption">Work schedule exemption</Label>
-            <Input 
-              type="workScheduleExemption" 
-              id="workScheduleExemption"
-              {...register('workScheduleExemption')}
-            />
-            <p>{errors.workScheduleExemption?.message}</p>
-          </div>
-          <div>
-            <Label htmlFor="workScheduleExemptionValue">Work schedule exemption value</Label>
-            <Input 
-              type="number" 
-              id="workScheduleExemptionValue"
-              readOnly
-              value={dynamicFields.workScheduleExemptionValue}
-            />
-          </div>
-          <div>
-            <Label htmlFor="irsTax">IRS tax</Label>
-            <Input 
-              type="number" 
-              id="irsTax"
-              {...register('irsTax')}
-            />
-            <p>{errors.irsTax?.message}</p>
-          </div>
-          <div>
-            <Label htmlFor="vacationsTwelfth">Vacations twelfth</Label>
-            <Input 
-              type="number" 
-              id="vacationsTwelfth"
-              readOnly
-              value={dynamicFields.vacationsTwelfth}
-            />
-          </div>
-          <div>
-            <Label htmlFor="christmasTwelfth">Christmas twelfth</Label>
-            <Input 
-              type="number" 
-              id="christmasTwelfth"
-              readOnly
-              value={dynamicFields.christmasTwelfth}
-            />
-          </div>
-          <div>
-            <Label htmlFor="otherExpenses">Other expenses</Label>
-            <Input 
-              type="number" 
-              id="otherExpenses"
-              {...register('otherExpenses')}
-            />
-            <p>{errors.otherExpenses?.message}</p>
-          </div>
-          <div>
-            <Label htmlFor="remoteWorkAllowance">Remote work allowance</Label>
-            <Input 
-              type="number" 
-              id="remoteWorkAllowance"
-              {...register('remoteWorkAllowance')}
-            />
-            <p>{errors.remoteWorkAllowance?.message}</p>
+            <div>
+              <Label htmlFor="baseValue">Base value</Label>
+              <Input 
+                type="number" 
+                id="baseValue"
+                {...register('baseValue')}
+              />
+              <p>{errors.baseValue?.message}</p>
+            </div>
+            <div>
+              <Label htmlFor="workScheduleExemption">Work schedule exemption</Label>
+              <Input 
+                type="workScheduleExemption" 
+                id="workScheduleExemption"
+                {...register('workScheduleExemption')}
+              />
+              <p>{errors.workScheduleExemption?.message}</p>
+            </div>
+            <div>
+              <Label htmlFor="workScheduleExemptionValue">Work schedule exemption value</Label>
+              <Input 
+                type="number" 
+                id="workScheduleExemptionValue"
+                readOnly
+                value={dynamicFields.workScheduleExemptionValue}
+              />
+            </div>
+            <div>
+              <Label htmlFor="irsTax">IRS tax</Label>
+              <Input 
+                type="number" 
+                id="irsTax"
+                {...register('irsTax')}
+              />
+              <p>{errors.irsTax?.message}</p>
+            </div>
+            <div>
+              <Label htmlFor="vacationsTwelfth">Vacations twelfth</Label>
+              <Input 
+                type="number" 
+                id="vacationsTwelfth"
+                readOnly
+                value={dynamicFields.vacationsTwelfth}
+              />
+            </div>
+            <div>
+              <Label htmlFor="christmasTwelfth">Christmas twelfth</Label>
+              <Input 
+                type="number" 
+                id="christmasTwelfth"
+                readOnly
+                value={dynamicFields.christmasTwelfth}
+              />
+            </div>
+            <div>
+              <Label htmlFor="otherExpenses">Other expenses</Label>
+              <Input 
+                type="number" 
+                id="otherExpenses"
+                {...register('otherExpenses')}
+              />
+              <p>{errors.otherExpenses?.message}</p>
+            </div>
+            <div>
+              <Label htmlFor="remoteWorkAllowance">Remote work allowance</Label>
+              <Input 
+                type="number" 
+                id="remoteWorkAllowance"
+                {...register('remoteWorkAllowance')}
+              />
+              <p>{errors.remoteWorkAllowance?.message}</p>
+            </div>
           </div>
         </Section>
         <Section>
           <h1>Benefits</h1>
           <div>
-            <Label htmlFor="communicationsPlafond">Communications plafond</Label>
-            <Input 
-              type="number" 
-              id="communicationsPlafond"
-              {...register('communicationsPlafond')}
-            />
-            <p>{errors.communicationsPlafond?.message}</p>
-          </div>
-          <div>
-            <Label htmlFor="healthInsurance">Health insurance</Label>
-            <Input 
-              type="healthInsurance" 
-              id="healthInsurance"
-              {...register('healthInsurance')}
-            />
-            <p>{errors.healthInsurance?.message}</p>
-          </div>
-          <div>
-            <Label htmlFor="includeFamilymembers">Include family members</Label>
-            <Input 
-              type="checkbox" 
-              id="includeFamilymembers"
-              {...register('includeFamilymembers')}
-            />
-            <p>{errors.includeFamilymembers?.message}</p>
-          </div>
-          {includeFamilymembers ?(
-            <>
-              <div>
-              <Label htmlFor="numberFamilyMembers">Number family members</Label>
+            <div>
+              <Label htmlFor="communicationsPlafond">Communications plafond</Label>
               <Input 
                 type="number" 
-                id="numberFamilyMembers"
-                {...register('numberFamilyMembers')}
+                id="communicationsPlafond"
+                {...register('communicationsPlafond')}
               />
-              <p>{errors.numberFamilyMembers?.message}</p>
+              <p>{errors.communicationsPlafond?.message}</p>
             </div>
             <div>
-              <Label htmlFor="familyMembersValue">Family members value</Label>
+              <Label htmlFor="healthInsurance">Health insurance</Label>
               <Input 
-                type="number" 
-                id="familyMembersValue"
-                readOnly
-                value={dynamicFields.familyMembersValue}
+                type="healthInsurance" 
+                id="healthInsurance"
+                {...register('healthInsurance')}
               />
+              <p>{errors.healthInsurance?.message}</p>
             </div>
-            </>
-          ): null}
+            <div>
+              <Label htmlFor="includeFamilymembers">Include family members</Label>
+              <Input 
+                type="checkbox" 
+                id="includeFamilymembers"
+                {...register('includeFamilymembers')}
+              />
+              <p>{errors.includeFamilymembers?.message}</p>
+            </div>
+            {includeFamilymembers ?(
+              <>
+                <div>
+                <Label htmlFor="numberFamilyMembers">Number family members</Label>
+                <Input 
+                  type="number" 
+                  id="numberFamilyMembers"
+                  {...register('numberFamilyMembers')}
+                />
+                <p>{errors.numberFamilyMembers?.message}</p>
+              </div>
+              <div>
+                <Label htmlFor="familyMembersValue">Family members value</Label>
+                <Input 
+                  type="number" 
+                  id="familyMembersValue"
+                  readOnly
+                  value={dynamicFields.familyMembersValue}
+                />
+              </div>
+              </>
+            ): null}
+          </div>
         </Section>
-        <div>
-          <button type='submit'>Subimit</button>
-          <button type='reset'>Cancel</button>
-        </div>
+        <ButtonContend>
+          <button type='submit'>Generate proposal</button>
+          <button type='reset' onClick={() => dispatch(cancel())}>Cancel</button>
+        </ButtonContend>
       </Form>
     </div>
    

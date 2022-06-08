@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import sliceForm from "./sliceForm";
 import sliceResult from "./sliceResult";
-import sliceFormWhitResult from "./sliceFormWhitResult";
+import sliceResumeModal from "./sliceResumeModal";
+import sliceCancelProposal from "./sliceCancelProposal";
 
 export const store = configureStore({
   reducer: {
     formData: sliceForm,
     resultData: sliceResult,
-    formWhitResult: sliceFormWhitResult
+    resumeModal: sliceResumeModal,
+    calcelProposal: sliceCancelProposal
   }
 });

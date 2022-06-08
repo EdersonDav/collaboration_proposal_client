@@ -21,7 +21,7 @@ export default createGlobalStyle`
   }
 
   main{
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     background-color: transparent;
   }
@@ -37,5 +37,75 @@ export default createGlobalStyle`
     }
     margin: auto;
     margin-top: 80px;
+  }
+
+  .react-modal-overlay{
+    position: fixed;
+    background: rgba(0,0,0, 0.5);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .react-modal-content{
+    width: 60%;
+    padding: 20px;
+    height: 80%;
+    background-color: #fff;
+    border: none;
+    border-radius: 15px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    padding: 30px;
+
+    @media (max-width: 769px) {
+      width: 100% ;
+      height: 625px;
+      max-height: 625px;
+      padding: 5px;
+      border-radius: 0;
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px;
+      border-radius: 10px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: none; 
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #ddd; 
+      border-radius: 10px;
+    }
+  }
+  .react-modal-close{
+    position: absolute;
+    right: 24px;
+    top: 24px;
+    border:0;
+    background: transparent;
+    transition: filter 0.2s;
+    &:hover{
+      filter: brightness(0.8);
+    }
+    svg{
+      font-size: 40px;
+    }
+    @media (max-width: 769px) {
+      top: 16px;
+      right: 16px;
+      svg{
+        font-size: 40px;
+      }
+    }
   }
 `;
