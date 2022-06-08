@@ -47,6 +47,7 @@
 # 👨🏿‍💻 Tecnologias Usadas
 * [TypeScript](https://www.typescriptlang.org/)
 * [ReactJs](https://pt-br.reactjs.org/)
+* [Redux-Toolkit](https://redux-toolkit.js.org/)
 * [StyledComponents](https://styled-components.com/)
 * [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML)
 
