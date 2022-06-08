@@ -14,5 +14,5 @@ export const schema = yup.object().shape({
   communicationsPlafond: yup.number().min(10).required(),
   healthInsurance: yup.number().min(10).required(),
   includeFamilymembers: yup.boolean(),
-  numberFamilyMembers: yup.number().min(1),
+  numberFamilyMembers: yup.number(),
 })

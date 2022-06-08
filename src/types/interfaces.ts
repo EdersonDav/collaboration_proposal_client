@@ -1,7 +1,7 @@
 export interface IFormFields {
   name: string;
   email: string;
-  collaborationStartDate: Date;
+  collaborationStartDate: string;
 
   baseValue: number;
   workScheduleExemption: number;

@@ -2,15 +2,23 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useDispatch, useSelector } from 'react-redux';
+import  { useNavigate } from 'react-router-dom'
 
 import { schema } from "./validations"
 import { api } from '../../service/api';
 import { IFormFields } from '../../types/interfaces';
 import { Form, Input, Label, Section } from './style';
-
-const initialValues = {} as  IFormFields
+import { saveDataForm, useFormData } from '../../redux/sliceForm';
+import { saveDataResult } from '../../redux/sliceResult';
+import { toogleValue } from '../../redux/sliceFormWhitResult';
+import moment from 'moment';
 
 export const FormComponent = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const initialValues = useSelector(useFormData)
+
   const [dynamicFields, setDynamicFields] = useState({
     vacationsTwelfth: 0,
     workScheduleExemptionValue: 0,
@@ -24,7 +32,8 @@ export const FormComponent = () => {
       workScheduleExemption: 25,
       remoteWorkAllowance: 15,
       communicationsPlafond: 25,
-      healthInsurance: 30
+      healthInsurance: 30,
+      numberFamilyMembers: 0
     },
     resolver: yupResolver(schema),
   });
@@ -51,14 +60,22 @@ export const FormComponent = () => {
       vacationsTwelfth: dynamicFields.vacationsTwelfth,
       workScheduleExemptionValue: dynamicFields.workScheduleExemptionValue,
       christmasTwelfth: dynamicFields.christmasTwelfth,
-      familyMembersValue: dynamicFields.familyMembersValue
+      familyMembersValue: dynamicFields.familyMembersValue,
+      collaborationStartDate: moment(values.collaborationStartDate).format('YYYY-MM-DD')
     }
 
+    dispatch((saveDataForm(payload)))
+
     api.post('/proposal', payload).then(res=> {
-      console.log(res.data);
+      dispatch((saveDataResult(res.data)));
+      dispatch(toogleValue());
+      navigate('/');
     }).catch(err =>{
       console.log(err.message);
     })
+
+   
+
   }
 
   useEffect(()=>{
